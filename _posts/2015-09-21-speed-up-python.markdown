@@ -6,6 +6,10 @@ categories: python
 ---
 
 
+Python is a powerful language for solving almost every development task in a productive way while maintaining a nice looking codebase. However, it sometimes suffers from the pain of not a being strongly-typed like C or Java. Cython is here to fix that by adding C types to Python.
+
+Sounds cool right? Let's see this in action...
+
 Here's a function that computes the fibonacci sequence **written in pure Python**
 {% highlight python %}
 def slow_fibonacci(n):
@@ -18,7 +22,7 @@ def slow_fibonacci(n):
 Here is the exact same function, **written in Cython**. The only syntax difference 
 is the declaration of data types.
 {% highlight python %}
-def fast_f(int n):
+def fast_fibonacci(int n):
     cdef double x=100.
     cdef int i
     for i in range(n):
@@ -27,8 +31,21 @@ def fast_f(int n):
 {% endhighlight %}
 
 
-Check out the [Jekyll docs][jekyll] for more info on how to get the most out of Jekyll. File all bugs/feature requests at [Jekyll’s GitHub repo][jekyll-gh]. If you have questions, you can ask them on [Jekyll’s dedicated Help repository][jekyll-help].
+Let's see how fast Python is at computing this sequence...
 
-[jekyll]:      http://jekyllrb.com
-[jekyll-gh]:   https://github.com/jekyll/jekyll
-[jekyll-help]: https://github.com/jekyll/jekyll-help
+{% highlight python %}
+t = Timer(lambda: fib.fast_fibonacci(400))
+t.timeit()
+31.568251133
+{% endhighlight %}
+
+OK. ≈ 32 seconds. Let's try to see if Cython can top that...
+
+{% highlight python %}
+t = Timer(lambda: fib.fast_fibonacci(400))
+t.timeit()
+0.613409996033
+{% endhighlight %}
+
+Whoah. ≈ 0.62 seconds! That's a x51 performance increase just by typing your data types.
+Next time you're making a computational expensive module, take a look at Cython.
