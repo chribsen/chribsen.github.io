@@ -1,7 +1,7 @@
 ---
 layout: post
 title:  "Speed up Python: A Gentle Comparison of Cython and Python"
-date:   2015-09-21 11:29:42
+date:   2015-09-24 11:29:42
 categories: python
 ---
 
