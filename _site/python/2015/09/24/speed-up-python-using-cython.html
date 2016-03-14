@@ -6,12 +6,11 @@
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
   <meta name="viewport" content="width=device-width, initial-scale=1">
 
-  <title>About</title>
-  <meta name="description" content="Go away.
-">
+  <title>Speed up Python: A Gentle Comparison of Cython and Python</title>
+  <meta name="description" content="Python is a powerful language for solving almost every development task in a productive way while maintaining a nice looking codebase. However, it sometimes ...">
 
   <link rel="stylesheet" href="/css/main.css">
-  <link rel="canonical" href="http://cdanielsen.dk/about/">
+  <link rel="canonical" href="http://cdanielsen.dk/python/2015/09/24/speed-up-python-using-cython.html">
   <link rel="alternate" type="application/rss+xml" title="Christian de Fries Danielsen" href="http://cdanielsen.dk/feed.xml" />
 </head>
 
@@ -58,15 +57,47 @@
         <div class="post">
 
   <header class="post-header">
-    <h1 class="post-title">About</h1>
+    <h1 class="post-title">Speed up Python: A Gentle Comparison of Cython and Python</h1>
+    <p class="post-meta">Sep 24, 2015</p>
   </header>
 
   <article class="post-content">
-    <p>This is the base Jekyll theme. You can find out more info about customizing your Jekyll theme, as well as basic Jekyll usage documentation at <a href="http://jekyllrb.com/">jekyllrb.com</a></p>
+    <p>Python is a powerful language for solving almost every development task in a productive way while maintaining a nice looking codebase. However, it sometimes suffers from the pain of not a being strongly-typed like C or Java. Cython is here to fix that by adding C types to Python.</p>
 
-<p>You can find the source code for the Jekyll new theme at: <a href="https://github.com/jglovier/jekyll-new">github.com/jglovier/jekyll-new</a></p>
+<p>Sounds cool right? Let’s see this in action…</p>
 
-<p>You can find the source code for Jekyll at <a href="https://github.com/jekyll/jekyll">github.com/jekyll/jekyll</a></p>
+<p>Here’s a function that computes the fibonacci sequence <strong>written in pure Python</strong></p>
+
+<figure class="highlight"><pre><code class="language-python" data-lang="python"><span class="k">def</span> <span class="nf">slow_fibonacci</span><span class="p">(</span><span class="n">n</span><span class="p">):</span>
+    <span class="n">x</span> <span class="o">=</span> <span class="mf">100.</span>
+    <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">n</span><span class="p">):</span>
+        <span class="n">x</span><span class="o">+=</span><span class="n">n</span>
+    <span class="k">return</span> <span class="n">x</span></code></pre></figure>
+
+<p>Here is the exact same function, <strong>written in Cython</strong>. The only syntax difference 
+is the declaration of data types.</p>
+
+<figure class="highlight"><pre><code class="language-python" data-lang="python"><span class="k">def</span> <span class="nf">fast_fibonacci</span><span class="p">(</span><span class="nb">int</span> <span class="n">n</span><span class="p">):</span>
+    <span class="n">cdef</span> <span class="n">double</span> <span class="n">x</span><span class="o">=</span><span class="mf">100.</span>
+    <span class="n">cdef</span> <span class="nb">int</span> <span class="n">i</span>
+    <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">n</span><span class="p">):</span>
+        <span class="n">x</span><span class="o">+=</span><span class="n">n</span>
+    <span class="k">return</span> <span class="n">x</span></code></pre></figure>
+
+<p>Let’s see how fast Python is at computing this sequence…</p>
+
+<figure class="highlight"><pre><code class="language-python" data-lang="python"><span class="n">t</span> <span class="o">=</span> <span class="n">Timer</span><span class="p">(</span><span class="k">lambda</span><span class="p">:</span> <span class="n">fib</span><span class="o">.</span><span class="n">fast_fibonacci</span><span class="p">(</span><span class="mi">400</span><span class="p">))</span>
+<span class="n">t</span><span class="o">.</span><span class="n">timeit</span><span class="p">()</span>
+<span class="mf">31.568251133</span></code></pre></figure>
+
+<p>OK. ≈ 32 seconds. Let’s try to see if Cython can top that…</p>
+
+<figure class="highlight"><pre><code class="language-python" data-lang="python"><span class="n">t</span> <span class="o">=</span> <span class="n">Timer</span><span class="p">(</span><span class="k">lambda</span><span class="p">:</span> <span class="n">fib</span><span class="o">.</span><span class="n">fast_fibonacci</span><span class="p">(</span><span class="mi">400</span><span class="p">))</span>
+<span class="n">t</span><span class="o">.</span><span class="n">timeit</span><span class="p">()</span>
+<span class="mf">0.613409996033</span></code></pre></figure>
+
+<p>Whoah. ≈ 0.62 seconds! That’s a x51 performance increase just by typing your data types.
+Next time you’re making a computational expensive module, take a look at Cython.</p>
 
   </article>
 
